@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <!-- Bootstrap 4 -->
+        <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.5.3/dist/css/bootstrap.min.css" integrity="sha384-TX8t27EcRE3e/ihU7zmQxVncDAy5uIKz4rEkgIXeMed4M0jlfIDPvg6uqKI2xXr2" crossorigin="anonymous">
+        <script src="https://code.jquery.com/jquery-3.3.1.min.js" integrity="sha384-tsQFqpEReu7ZLhBV2VZlAu7zcOV+rXbYlF2cqB8txI/8aZajjp4Bqd+V6D5IgvKT" crossorigin="anonymous"></script>
+        <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.5.3/dist/js/bootstrap.min.js" integrity="sha384-w1Q4orYjBQndcko6MimVbzY0tgp4pWB4lZ7lr30WKz0vr/aWKhXdBNmNb5D92v7s" crossorigin="anonymous"></script>
+        
+    </head>
+<body>
+    <h1 style="text-align: center;">List songs</h1>
+    <table class='table'>
+        <tbody id="datalist">
+            <thead>
+                <tr>
+                    <th>inx</th>
+                    <th>id</th>
+                    <th>title</th>
+                    <th>danceability</th>
+                    <th>energy</th>
+                    <th>key</th>
+                    <th>loudness</th>
+                    <th>mode</th>
+                    <th>acousticness</th>
+                    <th>instrumentalness</th>
+                    <th>liveness</th>
+                    <th>valence</th>
+                    <th>duration_ms</th>
+                    <th>num_bars</th>
+                    <th>num_sections</th>
+                    <th>num_segments</th>
+                </tr>
+            </thead>
+        </tbody>
+    </table>
+    <button class="btn btn-primary btn-block" id="next">Next</button>
+<script>
+
+var start = 0;
+var end = 10;
+var total = 0;
+function getList(){
+    $.ajax({
+        type: "POST",
+        url:  "http://127.0.0.1:8000/get/list/",
+        data: {
+            start : start,
+            end: end,
+        },
+        success: function(response){
+            console.log("success")
+            start += 10
+            end += 10
+            total = response["total"]
+            data = response["data"]
+            html = ""
+            for(i in data){
+                html += "<tr><td>" + data[i]["k"] + "</td><td>" + data[i]["id"] + "</td><td>" + data[i]["title"] + "</td>"
+                html += "<td>" + data[i]["danceability"] + "</td>"
+                html += "<td>" + data[i]["energy"] + "</td><td>" + data[i]["key"] + "</td><td>" + data[i]["loudness"] + "</td>"
+                html += "<td>" + data[i]["mode"] + "</td><td>" + data[i]["acousticness"] + "</td><td>" + data[i]["instrumentalness"] + "</td>"
+                html += "<td>" + data[i]["liveness"] + "</td><td>" + data[i]["valence"] + "</td><td>" + data[i]["duration_ms"] + "</td>"
+                html += "<td>" + data[i]["num_bars"] + "</td><td>" + data[i]["num_sections"] + "</td><td>" + data[i]["num_segments"] + "</td></tr>"
+            }
+            document.getElementById('datalist').innerHTML = html;
+        },
+        error: function (textStatus, errorThrown){
+            console.log("error")
+        }
+    });
+}
+
+$(document).ready(function() {
+    getList();
+});
+
+$(document).on("click","#next",function() {
+    if(end>total){
+        alert("end of data")
+    }
+    else {
+        getList();
+    }
+});
+
+</script>
+</body>
+</html>
